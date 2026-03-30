@@ -1,0 +1,69 @@
+# Allow Override of Red Hat Universal Base Image (UBI) Version
+ARG UBI_VERSION=10
+
+# Red Hat Universal Base Image (UBI)
+# trivy:ignore:DS-0001 - ubi${UBI_VERSION}:latest is intentional
+FROM registry.access.redhat.com/ubi${UBI_VERSION}:latest AS terraform-workspace
+
+# Allow Override of MISE Version
+ARG MISE_VERSION=v2026.3.13
+
+# Allow Override of GOVC Version
+ARG GOVC_VERSION=v0.53.0
+
+# Allow Override of Runtime User Details
+ARG USER_NAME=terraform
+ARG USER_COMMENT='Terraform Service Account'
+ARG USER_HOME=/home/terraform
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+# Install Developer Tools
+RUN printf 'Install Developer Tools\n'; \
+    dnf install -y \
+                --setopt install_weak_deps=false \
+                --nodocs \
+                    bash-completion \
+                    diffutils \
+                    git \
+                    iputils \
+                    jq \
+                    libatomic \
+                    procps-ng \
+                    unzip && \
+    dnf clean all && \
+    rm -rf /var/cache /var/log/dnf* && \
+    python3 -m ensurepip --upgrade && \
+    python3 -m pip install --upgrade pip && \
+    curl -L "https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64.tar.gz" | tar xzf - --strip-components=1 -C /usr/local && \
+    curl -L "https://github.com/vmware/govmomi/releases/download/${GOVC_VERSION}/govc_Linux_x86_64.tar.gz" | tar xzf - -C /usr/local/bin govc && \
+    chown -R root:root /usr/local
+
+# Setup Runtime User
+RUN printf 'Setup Runtime User\n'; \
+    groupadd --gid "${USER_GID}" "${USER_NAME}" && \
+    useradd --create-home \
+            --uid "${USER_UID}" \
+            --gid "${USER_GID}" \
+            --home-dir "${USER_HOME}" \
+            --comment "${USER_COMMENT}" \
+            "${USER_NAME}"
+
+# Configure Runtime User
+RUN printf 'Configure Runtime User\n'; \
+    mkdir -p /workspaces
+
+# Switch to Runtime User
+USER ${USER_NAME}
+WORKDIR ${USER_HOME}
+
+# Configure Runtime User Environment
+COPY .devcontainer/requirements.txt ${USER_HOME}/requirements.txt
+COPY .devcontainer/bashrc ${USER_HOME}/.bashrc
+COPY .devcontainer/tool-versions ${USER_HOME}/.tool-versions
+RUN printf 'Configure Runtime User Environment\n'; \
+    source "${USER_HOME}/.bashrc" && \
+    mkdir "${USER_HOME}/.ssh" && \
+    echo -e 'Host *\n\tUser terraform\n' > "${USER_HOME}/.ssh/config" && \
+    chmod 700 "${USER_HOME}/.ssh"; chmod 600 "${USER_HOME}/.ssh/config" && \
+    while read tool version; do mise use --global "${tool}@${version}"; done < "${USER_HOME}/.tool-versions"

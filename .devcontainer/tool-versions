@@ -1,0 +1,7 @@
+checkov        3.2.508
+pre-commit     4.5.1
+terraform      1.14.6
+terraform-docs 0.21.0
+tflint         0.61.0
+tfupdate       0.9.3
+trivy          0.69.3

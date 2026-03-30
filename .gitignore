@@ -1,0 +1,24 @@
+.env
+.devcontainer/bash_history
+
+# Terraform files
+**/.terraform/*
+*.terraform.lock.hcl*
+*.tfvars*
+*.tfstate*
+
+# OS files
+*~
+._*
+*.bak
+*.bk
+.bundle
+.cache
+.DS_Store
+.history
+*.old
+*.orig
+.settings
+*.swp
+Thumbs.db
+.Trashes
