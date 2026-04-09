@@ -120,10 +120,16 @@ resource "ansible_host" "virtual_machine" {
   count  = var.virtual_machine.enable_ansible_inventory ? 1 : 0
   name   = local.fqdn
   groups = length(coalesce(var.virtual_machine.groups, [])) > 0 ? var.virtual_machine.groups : ["terraform_managed"]
-  variables = {
-    instance_name = local.instance_name
-    hostname      = local.hostname
-    domain        = local.domain
-    description   = local.description
-  }
+  variables = merge(
+    {
+      instance_name = local.instance_name
+      hostname      = local.hostname
+      domain        = local.domain
+      description   = local.description
+    },
+    var.virtual_machine.ansible_host_override ? {
+      ansible_host = vsphere_virtual_machine.virtual_machine.default_ip_address
+    } : {},
+    var.virtual_machine.extra_vars
+  )
 }

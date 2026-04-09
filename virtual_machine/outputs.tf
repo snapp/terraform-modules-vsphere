@@ -12,3 +12,8 @@ output "virtual_machine" {
   description = "The vSphere virtual machine resource."
   value       = vsphere_virtual_machine.virtual_machine
 }
+
+output "ansible_host" {
+  description = "The Ansible inventory host resource, or null if enable_ansible_inventory is false."
+  value       = one(ansible_host.virtual_machine)
+}

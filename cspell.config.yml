@@ -38,6 +38,7 @@ words:
   - ignorespace
   - iputils
   - libatomic
+  - myuser
   - netmask
   - nodocs
   - procps
