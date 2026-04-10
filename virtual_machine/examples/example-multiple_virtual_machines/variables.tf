@@ -56,7 +56,7 @@ variable "virtual_machine" {
     # Ansible inventory
     groups                   = optional(list(string), [])
     enable_ansible_inventory = optional(bool, true)
-    ansible_host_override    = optional(bool, true)
+    ansible_host_override    = optional(bool, false)
     extra_vars               = optional(map(string), {})
   })
   description = <<-EOT
@@ -84,7 +84,7 @@ variable "virtual_machine" {
       }
       groups : "An array of Ansible inventory group names that the virtual machine should be associated with."
       enable_ansible_inventory : "Whether to create an Ansible inventory host entry for the virtual machine (default: true)."
-      ansible_host_override : "When true, injects ansible_host=<VM IPv4> into the inventory host vars so Ansible connects by IP instead of resolving the FQDN (default: true)."
+      ansible_host_override : "When true, injects ansible_host=<VM IPv4> into the inventory host vars so Ansible connects by IP instead of resolving the FQDN (default: false)."
       extra_vars : "An optional map of additional Ansible inventory host variables to merge into the host entry (e.g. { ansible_user = \"myuser\", my_custom_var = \"value\" })."
     }
   EOT
