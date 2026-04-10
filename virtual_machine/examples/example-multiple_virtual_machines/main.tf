@@ -4,7 +4,7 @@ terraform {
 
 # Simple example with no `terraform.tfvars` overrides
 module "test1" {
-  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=c8aabc1"
+  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=dbcc09e"
 
   vsphere         = var.vsphere
   virtual_machine = var.virtual_machine
@@ -12,7 +12,7 @@ module "test1" {
 
 # Example that merges the `name`, `hostname`, `domain`, and `description` variables
 module "test2" {
-  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=c8aabc1"
+  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=dbcc09e"
 
   vsphere = var.vsphere
 
@@ -26,7 +26,7 @@ module "test2" {
 
 # Example where no root password is set
 module "test3" {
-  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=c8aabc1"
+  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=dbcc09e"
 
   vsphere = var.vsphere
 
@@ -37,7 +37,7 @@ module "test3" {
 
 # Example where no user modifications are performed
 module "test4" {
-  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=c8aabc1"
+  source = "git::https://github.com/snapp/terraform-modules-vsphere.git//virtual_machine?ref=dbcc09e"
 
   vsphere = var.vsphere
 
