@@ -50,20 +50,20 @@ RUN printf 'Setup Runtime User\n'; \
             "${USER_NAME}"
 
 # Configure Runtime User
+COPY .devcontainer/bashrc ${USER_HOME}/.bashrc
+COPY .devcontainer/tool-versions ${USER_HOME}/.tool-versions
 RUN printf 'Configure Runtime User\n'; \
-    mkdir -p /workspaces
+    mkdir "${USER_HOME}/.ssh" && \
+    echo -e "Host *\n\tUser ${USER_NAME}\n" > "${USER_HOME}/.ssh/config" && \
+    chmod 700 "${USER_HOME}/.ssh"; chmod 600 "${USER_HOME}/.ssh/config" && \
+    mkdir -p /workspaces && \
+    chown -R "${USER_NAME}:${USER_NAME}" "${USER_HOME}" /workspaces
 
 # Switch to Runtime User
 USER ${USER_NAME}
 WORKDIR ${USER_HOME}
 
 # Configure Runtime User Environment
-COPY .devcontainer/requirements.txt ${USER_HOME}/requirements.txt
-COPY .devcontainer/bashrc ${USER_HOME}/.bashrc
-COPY .devcontainer/tool-versions ${USER_HOME}/.tool-versions
 RUN printf 'Configure Runtime User Environment\n'; \
     source "${USER_HOME}/.bashrc" && \
-    mkdir "${USER_HOME}/.ssh" && \
-    echo -e 'Host *\n\tUser terraform\n' > "${USER_HOME}/.ssh/config" && \
-    chmod 700 "${USER_HOME}/.ssh"; chmod 600 "${USER_HOME}/.ssh/config" && \
     while read tool version; do mise use --global "${tool}@${version}"; done < "${USER_HOME}/.tool-versions"
