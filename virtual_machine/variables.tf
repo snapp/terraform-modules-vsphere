@@ -53,6 +53,9 @@ variable "virtual_machine" {
       uid            = optional(number)
     }))
 
+    # First-boot commands
+    runcmd = optional(list(string), [])
+
     # Ansible inventory
     groups                   = optional(list(string), [])
     enable_ansible_inventory = optional(bool, true)
@@ -82,6 +85,7 @@ variable "virtual_machine" {
         sudo_rule : "The optional sudo rule applied to the user (e.g. 'ALL=(ALL) NOPASSWD:ALL')."
         uid : "The optional user ID of the user."
       }
+      runcmd : "An optional list of shell commands to run on first boot via cloud-init runcmd (e.g. [\"ipa-client-install --unattended ...\"])."
       groups : "An array of Ansible inventory group names that the virtual machine should be associated with."
       enable_ansible_inventory : "Whether to create an Ansible inventory host entry for the virtual machine (default: true)."
       ansible_host_override : "When true, injects ansible_host=<VM IPv4> into the inventory host vars so Ansible connects by IP instead of resolving the FQDN (default: false)."

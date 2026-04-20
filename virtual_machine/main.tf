@@ -110,6 +110,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
       create_users  = var.virtual_machine.user != null || try(coalesce(var.virtual_machine.root_password, ""), "") != ""
       user          = var.virtual_machine.user
       root_password = try(coalesce(var.virtual_machine.root_password, ""), "")
+      runcmd        = coalesce(var.virtual_machine.runcmd, [])
     }))
 
   }

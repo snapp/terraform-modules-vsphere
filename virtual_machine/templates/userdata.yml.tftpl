@@ -9,20 +9,20 @@ users:
 %{ if user != null ~}
   - name: "${user.username}"
     gecos: "${user.display_name}"
-%{ if user.password != "" ~}
+%{ if try(user.password, "") != "" ~}
     hashed_passwd: "${user.password}"
 %{ endif ~}
     lock_passwd: false
-%{ if user.sudo_rule != "" ~}
+%{ if try(user.sudo_rule, "") != "" ~}
     sudo: "${user.sudo_rule}"
 %{ else ~}
     sudo: false
 %{ endif ~}
-%{ if user.uid != "" ~}
-    uid: "${user.uid}"
-    gid: "${user.uid}"
+%{ if user.uid != null ~}
+    uid: ${user.uid}
+    gid: ${user.uid}
 %{ endif ~}
-%{ if user.homedir != "" ~}
+%{ if try(user.homedir, "") != "" ~}
     homedir: "${user.homedir}"
 %{ endif ~}
     ssh_authorized_keys:
@@ -33,4 +33,10 @@ users:
     hashed_passwd: "${root_password}"
     lock_passwd: false
 %{ endif ~}
+%{ endif ~}
+%{ if length(runcmd) > 0 ~}
+runcmd:
+%{ for cmd in runcmd ~}
+  - ${cmd}
+%{ endfor ~}
 %{ endif ~}
